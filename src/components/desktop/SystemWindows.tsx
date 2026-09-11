@@ -56,8 +56,8 @@ function SideItem({
   return (
     <button
       type="button"
-      className="win-nav-item"
-      style={active ? { background: "rgb(255 255 255 / 8%)" } : undefined}
+      className={cn("win-nav-item", active && "is-active")}
+      aria-current={active ? "page" : undefined}
       onClick={onClick}
     >
       {icon}
@@ -340,8 +340,8 @@ function NavRow({ label, active, onClick }: { label: string; active?: boolean; o
   return (
     <button
       type="button"
-      className="win-nav-item"
-      style={active ? { background: "rgb(255 255 255 / 8%)" } : undefined}
+      className={cn("win-nav-item", active && "is-active")}
+      aria-current={active ? "page" : undefined}
       onClick={onClick}
     >
       {label}

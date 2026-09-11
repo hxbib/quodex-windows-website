@@ -10,7 +10,17 @@ GitHub is the origin. A push to `main` runs [.github/workflows/deploy.yml](.gith
 
 1. `npm ci`, tests, and `npm run build`
 2. Built files are force-published to branch [`cf-live`](https://github.com/hxbib/quodex-windows-website/tree/cf-live)
-3. The Worker on route `quodex.app/windows*` serves `cf-live`. Hashed `/assets/*` files cache in KV. HTML revalidates from GitHub so the next push goes live without a Cloudflare token.
+3. The Worker on route `quodex.app/windows*` serves `cf-live` from GitHub. Hashed `/assets/*` files cache in KV. HTML and text files revalidate from GitHub so the next push goes live without a Cloudflare token.
+
+Well-known files live in `public/` and ship with `cf-live`:
+
+- `/windows/robots.txt`, `/windows/sitemap.xml`
+- `/windows/llms.txt`, `/windows/llm.txt`, `/windows/humans.txt`
+- `/windows/.well-known/security.txt` and `/windows/security.txt`
+- Apex aliases on the same Worker: `/.well-known/security.txt`, `/security.txt`, `/llms.txt`, `/llm.txt`, `/humans.txt`
+
+Do not attach a Worker to `/robots.txt` — Cloudflare manages the zone robots file for AI crawlers.
+
 
 No Cloudflare API token is required for that path.
 

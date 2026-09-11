@@ -128,7 +128,7 @@ export interface DesktopState {
 }
 
 const defaults: Record<WindowId, WindowState> = {
-  quodex: { open: true, minimized: false, maximized: false, snap: null, x: 220, y: 44, w: 560, h: 720 },
+  quodex: { open: true, minimized: false, maximized: false, snap: null, x: 180, y: 36, w: 640, h: 680 },
   settings: { open: false, minimized: false, maximized: false, snap: null, x: 160, y: 72, w: 860, h: 620 },
   explorer: { open: false, minimized: false, maximized: false, snap: null, x: 120, y: 90, w: 780, h: 540 },
   taskmgr: { open: false, minimized: false, maximized: false, snap: null, x: 280, y: 120, w: 520, h: 420 },

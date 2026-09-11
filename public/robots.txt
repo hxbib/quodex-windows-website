@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /windows
+Allow: /windows/
+
+Sitemap: https://quodex.app/windows/sitemap.xml

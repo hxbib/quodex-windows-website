@@ -1,0 +1,10 @@
+/* TEAM */
+Developer: Sadman Habib
+Site: https://github.com/hxbib
+Contact: security@quodex.app
+
+/* SITE */
+Standards: HTML, CSS, JavaScript
+Software: React, Vite, Cloudflare Workers
+Language: English
+Doctype: HTML5

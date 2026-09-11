@@ -597,27 +597,40 @@
   }
 
   .pool-lane-meta {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name pct"
+      "reset reset";
+    column-gap: 8px;
+    row-gap: 2px;
     align-items: baseline;
-    gap: 2px 8px;
     min-width: 0;
   }
   .pool-lane-name {
+    grid-area: name;
     min-width: 0;
-    flex: 1 1 8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 12px;
     font-weight: 600;
     line-height: 1.25;
   }
   .pool-lane-pct {
+    grid-area: pct;
     font-size: 12px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
     line-height: 1.25;
+    white-space: nowrap;
   }
   .pool-lane-reset {
-    flex: 1 1 100%;
+    grid-area: reset;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 11px;
     line-height: 1.25;
     color: var(--color-win-subtle);
@@ -1204,11 +1217,11 @@
     font-size: 11.5px;
     line-height: 1.55;
     color: rgb(244 244 245 / 52%);
-    text-align: center;
+    text-align: left;
     max-width: none;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: baseline;
     column-gap: 0.4em;
     row-gap: 4px;
@@ -1300,12 +1313,12 @@
     }
 
     .lock-meta {
-      text-align: center;
+      text-align: left;
       max-width: none;
     }
 
     .lock-meta-req {
-      flex: 0 1 auto;
+      flex: 1 0 100%;
     }
 
     .lock-meta-indie {
@@ -1407,7 +1420,7 @@
     height: 32px;
     align-items: center;
     gap: 8px;
-    padding: 0 10px;
+    padding: 0 10px 0 14px;
     border: 0;
     border-radius: 4px;
     background: transparent;
@@ -1418,6 +1431,21 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     transition: background-color var(--motion-quick) var(--ease-win);
+  }
+  .win-nav-item.is-active,
+  .win-nav-item[aria-current="page"] {
+    background: rgb(255 255 255 / 8%);
+  }
+  .win-nav-item.is-active::before,
+  .win-nav-item[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 7px;
+    bottom: 7px;
+    width: 3px;
+    border-radius: 99px;
+    background: var(--color-win-accent);
   }
   .win-nav-item:hover,
   .win-nav-item:focus-visible,
