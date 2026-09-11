@@ -139,6 +139,7 @@ export function Taskbar() {
         onClick={() => launch("settings")}
         onMenu={(event) => openJump("settings", event)}
         icon={<SettingsGlyph size={22} />}
+        hideMobile
       />
       {windows.taskmgr.open ? (
         <TaskButton
@@ -179,7 +180,7 @@ export function Taskbar() {
         {quodexAlive ? (
           <button
             type="button"
-            className={cn("tray-btn", flyout === "quodex-tray" && "bg-white/10", quodexPinned && "is-pinned")}
+            className={cn("tray-btn tray-btn-glyph", flyout === "quodex-tray" && "bg-white/10", quodexPinned && "is-pinned")}
             aria-label="Quodex tray"
             title="Quodex — click for usage, right-click or double-click for more"
             onClick={() => toggleFlyout("quodex-tray")}

@@ -1,47 +1,38 @@
-# Quodex for Windows — website
+# Quodex for Windows — landing
 
-The official landing page for [Quodex for Windows](https://github.com/hxbib/quodex-windows), a lightweight Windows tray app for viewing usage limits and banked resets across multiple ChatGPT accounts.
+Interactive Windows 11 desktop for [Quodex for Windows](https://github.com/hxbib/quodex-windows).
+This is the page that should live at **https://quodex.app/windows**.
 
-This is an interactive Windows 11 desktop in the browser. Sample accounts only — ChatGPT sign-in is disabled here. The installed app is a separate repository.
+It is a static Vite site. It does not sign in to ChatGPT. Download the Windows app to sign in.
 
-The macOS landing page is [quodex.app](https://quodex.app). This site is meant to live at [quodex.app/windows](https://quodex.app/windows).
-
-## Requirements
-
-- Node.js 22 or later
-- npm
-
-## Local development
+## Develop
 
 ```bash
 npm ci
+npm test
+npm run typecheck
 npm run dev
 ```
 
-The dev server mounts the site at `/windows/`, matching the production path.
-
-## Verification
+## Production build for quodex.app/windows
 
 ```bash
-npm run check
-npm audit --omit=dev
+npm ci
+npm run build
 ```
 
-## Cloudflare deployment
+`dist/` is a static folder with base `/windows/`.
 
-Build the static site, then deploy the Worker (assets + `/windows` prefix):
+Deploy this repo as a Cloudflare Worker (see `wrangler.toml`):
 
 ```bash
-npm run build
 npx wrangler deploy
 ```
 
-In the Cloudflare dashboard for the `quodex.app` zone, add a route so this Worker receives `quodex.app/windows*`. The macOS site can keep serving the rest of the hostname.
+The Worker serves the site at `/windows`. The macOS landing in [hxbib/quodex-website](https://github.com/hxbib/quodex-website) stays at `/`.
 
-`vite` production assets are rooted at `/windows/`. The Worker strips that prefix when it reads files from `dist/`.
-
-The production Windows landing is intended for [quodex.app/windows](https://quodex.app/windows). Download still points at the [Windows GitHub Releases](https://github.com/hxbib/quodex-windows/releases/latest).
+Download still falls back to GitHub Releases if the zip is not hosted next to the page.
 
 ## License
 
-Released under the MIT License. Quodex is an independent project and is not affiliated with or endorsed by OpenAI.
+MIT. Independent project — not affiliated with OpenAI.

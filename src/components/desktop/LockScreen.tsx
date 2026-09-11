@@ -38,7 +38,8 @@ export function LockScreen() {
     if (power === "lock") {
       setMounted(true);
       setLeaving(false);
-      return;
+      const id = window.setTimeout(() => root.current?.focus(), 0);
+      return () => window.clearTimeout(id);
     }
     if (!mounted) return;
     stopMotion();
@@ -119,19 +120,34 @@ export function LockScreen() {
     kick();
   };
 
+  const unlock = (event?: { target?: EventTarget | null }) => {
+    if (leaving) return;
+    const target = event?.target as HTMLElement | null;
+    if (target?.closest("a, button")) return;
+    enterDesktop();
+  };
+
   return (
     <div
       ref={root}
       className={leaving ? "lock-screen is-leaving" : "lock-screen"}
       role="region"
       aria-label="Quodex for Windows"
+      tabIndex={0}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      onClick={(event) => {
+      onPointerUp={(event) => unlock(event)}
+      onKeyDown={(event) => {
+        if (event.nativeEvent.isComposing || event.metaKey || event.ctrlKey || event.altKey) return;
+        if (event.key === "Tab" || event.key.startsWith("F")) return;
         const target = event.target as HTMLElement | null;
         if (target?.closest("a, button")) return;
-        enterDesktop();
+        if (event.key.length === 1 || event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          unlock();
+        }
       }}
+      onClick={(event) => unlock(event)}
     >
       <div className="lock-bloom" aria-hidden="true" />
       <div className="lock-glow" aria-hidden="true" />
@@ -170,7 +186,18 @@ export function LockScreen() {
               </p>
 
               <div className="lock-actions">
-                <button type="button" className="lock-btn lock-btn-light" onClick={enterDesktop}>
+                <button
+                  type="button"
+                  className="lock-btn lock-btn-light"
+                  onPointerUp={(event) => {
+                    event.stopPropagation();
+                    enterDesktop();
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    enterDesktop();
+                  }}
+                >
                   Enter the desktop
                   <ArrowRight size={16} />
                 </button>
@@ -181,8 +208,8 @@ export function LockScreen() {
               </div>
 
               <p className="lock-meta">
-                <span className="lock-meta-req">{SITE.requirements}.</span>
-                <span className="lock-meta-indie">Independent — not affiliated with OpenAI.</span>
+                <span className="lock-meta-req">{SITE.requirements}. </span>
+                <span className="lock-meta-indie">Independent — not affiliated with OpenAI. </span>
                 <span className="lock-meta-links">
                   <a href={SITE.macos} target="_blank" rel="noreferrer">
                     macOS original
@@ -202,36 +229,6 @@ export function LockScreen() {
   );
 }
 
-export function WelcomeTip() {
-  const power = useDesktopStore((s) => s.power);
-  const shown = useDesktopStore((s) => s.welcomeTipShown);
-  const dismissWelcomeTip = useDesktopStore((s) => s.dismissWelcomeTip);
-  const [hiding, setHiding] = useState(false);
-  if (power !== "on" || shown) return null;
-
-  const dismiss = () => {
-    setHiding(true);
-    window.setTimeout(() => dismissWelcomeTip(), 180);
-  };
-
-  return (
-    <aside className={hiding ? "welcome-tip acrylic is-leaving" : "welcome-tip acrylic"} role="status">
-      <p className="text-[13px] font-semibold">This is the live desktop</p>
-      <p className="mt-1 text-[12px] leading-relaxed text-win-muted">
-        Quodex is on the taskbar and next to the clock. Close (✕) hides to the tray — it does not quit. Accounts here are sample data.
-      </p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button type="button" className="fluent-btn fluent-btn-accent h-8 px-3 text-[12px]" onClick={dismiss}>
-          Got it
-        </button>
-        <button type="button" className="fluent-btn h-8 px-3 text-[12px]" onClick={downloadWindowsApp}>
-          {SITE.downloadLabel}
-        </button>
-      </div>
-    </aside>
-  );
-}
-
 export function MobileDownloadBar() {
   const power = useDesktopStore((s) => s.power);
   const lockDesktop = useDesktopStore((s) => s.lockDesktop);
@@ -240,7 +237,7 @@ export function MobileDownloadBar() {
     <div className="mobile-site-bar acrylic">
       <button type="button" className="fluent-btn fluent-btn-accent" onClick={downloadWindowsApp}>
         <Download size={15} />
-        Download installer
+        Download for Windows
       </button>
       <button type="button" className="fluent-btn" onClick={lockDesktop}>
         Lock

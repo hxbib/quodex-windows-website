@@ -8,5 +8,5 @@ test("Windows landing never points Download at the macOS DMG repo", () => {
   assert.doesNotMatch(SITE.download, /hxbib\/Quodex\/releases/);
   assert.equal(SITE.macos, "https://quodex.app");
   assert.equal(SITE.macosSource, "https://github.com/hxbib/Quodex");
-  assert.equal(SITE.windows, "https://quodex.app/windows");
+  assert.equal(SITE.asset, "/Quodex-windows-x64.zip");
 });

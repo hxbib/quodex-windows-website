@@ -5,9 +5,12 @@ import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
+const base = process.env.QUODEX_BASE || "/windows/";
 
 export default defineConfig({
-  base: "/windows/",
+  root: resolve(rootDir, "src/landing"),
+  base,
+  publicDir: resolve(rootDir, "public"),
   plugins: [tailwindcss(), viteReact()],
   resolve: {
     alias: {
@@ -15,9 +18,13 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist",
+    outDir: resolve(rootDir, "dist"),
     emptyOutDir: true,
     sourcemap: false,
-    cssCodeSplit: false,
+  },
+  server: {
+    host: "0.0.0.0",
+    port: 8080,
+    strictPort: true,
   },
 });

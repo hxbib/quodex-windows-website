@@ -18,7 +18,7 @@ import {
   TitleMenu,
 } from "./Overlays";
 import { Taskbar } from "./Taskbar";
-import { LockScreen, MobileDownloadBar, WelcomeTip } from "./LockScreen";
+import { LockScreen, MobileDownloadBar } from "./LockScreen";
 import { QuodexFlyout } from "@/components/quodex/QuodexFlyout";
 import { QuodexWindow } from "@/components/quodex/QuodexWindow";
 import { RemoveDialog } from "@/components/quodex/RemoveDialog";
@@ -41,10 +41,10 @@ export function WindowsDesktop() {
   const removeTarget = useDesktopStore((s) => s.removeTarget);
   const power = useDesktopStore((s) => s.power);
   const notified = useRef<Record<string, number>>({});
+  const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
-    useDesktopStore.getState().setViewport(window.innerWidth, window.innerHeight);
     void Promise.all([useQuodexStore.persist.rehydrate(), useDesktopStore.persist.rehydrate()]).then(() => {
       if (cancelled) return;
       useQuodexStore.getState().hydrate();
@@ -56,17 +56,27 @@ export function WindowsDesktop() {
   }, []);
 
   useEffect(() => {
-    const syncViewport = () => useDesktopStore.getState().setViewport(window.innerWidth, window.innerHeight);
+    const root = rootRef.current;
+    if (!root) return;
+    const syncViewport = () => {
+      const box = root.getBoundingClientRect();
+      useDesktopStore.getState().setViewport(Math.round(box.width), Math.round(box.height));
+    };
     syncViewport();
+    const observer = new ResizeObserver(syncViewport);
+    observer.observe(root);
     window.addEventListener("resize", syncViewport);
-    return () => window.removeEventListener("resize", syncViewport);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", syncViewport);
+    };
   }, []);
 
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
       if (!target) return;
-      if (target.closest(".flyout, .taskbar, .jump-list, .desktop-context, .win-window, .snap-picker, .welcome-tip, .win-toast, .toast-card")) {
+      if (target.closest(".flyout, .taskbar, .jump-list, .desktop-context, .win-window, .snap-picker, .win-toast, .toast-card")) {
         return;
       }
       const desktop = useDesktopStore.getState();
@@ -124,6 +134,8 @@ export function WindowsDesktop() {
       }
       if (desktop.power === "lock") {
         if (chord || event.key.startsWith("F")) return;
+        const target = event.target as HTMLElement | null;
+        if (target?.closest("a, button, input, textarea, select")) return;
         if (event.key.length === 1 || event.key === "Enter" || event.key === " ") {
           desktop.enterDesktop();
         }
@@ -131,9 +143,10 @@ export function WindowsDesktop() {
       }
       if (desktop.power === "sleep" || desktop.power === "off") {
         if (chord || event.key.startsWith("F")) return;
+        const target = event.target as HTMLElement | null;
+        if (target?.closest("a, button, input, textarea, select")) return;
         if (event.key.length === 1 || event.key === "Enter" || event.key === " ") {
           desktop.wake();
-          if (desktop.power === "off") desktop.openWindow("quodex");
         }
         return;
       }
@@ -176,18 +189,9 @@ export function WindowsDesktop() {
       } else if (key === ",") {
         event.preventDefault();
         desktop.openWindow("settings");
-      } else if (key === "k" || key === "s") {
+      } else if (key === "k") {
         event.preventDefault();
         desktop.toggleFlyout("search");
-      } else if (key === "d") {
-        event.preventDefault();
-        desktop.showDesktop();
-      } else if (key === "a") {
-        event.preventDefault();
-        desktop.toggleFlyout("quick");
-      } else if (key === "n") {
-        event.preventDefault();
-        desktop.toggleFlyout("calendar");
       } else if (key === "escape" || event.key === "Meta") {
         desktop.toggleFlyout("start");
       } else if (event.key === "ArrowLeft") {
@@ -223,6 +227,7 @@ export function WindowsDesktop() {
 
   return (
     <div
+      ref={rootRef}
       className="desktop-root"
       data-theme={theme}
       data-accent={accent}
@@ -237,6 +242,7 @@ export function WindowsDesktop() {
           "--color-win-accent-hover": accentColor,
           "--color-win-accent-ink": accentInk,
           "--wallpaper-brightness": String(brightness / 100),
+          "--desktop-wallpaper": `url("${(import.meta.env.BASE_URL || "/").replace(/\/?$/, "/")}wallpaper.jpg")`,
         } as CSSProperties
       }
       onMouseDown={(event) => {
@@ -280,7 +286,6 @@ export function WindowsDesktop() {
           <TitleMenu />
           {removeTarget ? <RemoveDialog /> : null}
           <DesktopToasts />
-          <WelcomeTip />
           <MobileDownloadBar />
           <TaskView />
           <AppSwitcher />

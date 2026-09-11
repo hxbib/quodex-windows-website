@@ -170,7 +170,7 @@ export function AppSwitcher() {
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("keyup", onUp);
     };
-  }, [overlay, open.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [overlay, open.length]);
 
   if (overlay !== "switcher") return null;
   const ordered = [...open].sort((a, b) => focus.indexOf(b) - focus.indexOf(a));

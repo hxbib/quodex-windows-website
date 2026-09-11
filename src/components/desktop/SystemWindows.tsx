@@ -10,7 +10,7 @@ import {
   Palette,
   Trash2,
 } from "lucide-react";
-import { ExplorerIcon, InstallIcon, RecycleIcon, SettingsGlyph } from "@/components/icons";
+import { ExplorerIcon, InstallIcon, QuodexAppIcon, RecycleIcon, SettingsGlyph } from "@/components/icons";
 import { WindowFrame } from "@/components/windows/WindowFrame";
 import { SettingsPage } from "@/components/quodex/SettingsPage";
 import { ACCENTS, useDesktopStore, type AccentId } from "@/lib/desktop/store";
@@ -175,18 +175,17 @@ function SystemSettings() {
           <li><kbd className="kbd">Ctrl</kbd> + <kbd className="kbd">E</kbd> File Explorer</li>
           <li><kbd className="kbd">Ctrl</kbd> + <kbd className="kbd">,</kbd> Settings</li>
           <li><kbd className="kbd">Ctrl</kbd> + <kbd className="kbd">K</kbd> Search</li>
-          <li><kbd className="kbd">Ctrl</kbd> + <kbd className="kbd">D</kbd> Show desktop</li>
           <li><kbd className="kbd">Alt</kbd> + <kbd className="kbd">Tab</kbd> Switch windows</li>
           <li><kbd className="kbd">Alt</kbd> + <kbd className="kbd">F4</kbd> Hide Quodex to tray / close other windows</li>
           <li><kbd className="kbd">Ctrl</kbd> + <kbd className="kbd">Shift</kbd> + <kbd className="kbd">Esc</kbd> Task Manager</li>
-          <li><kbd className="kbd">Win</kbd> + arrows snap the focused window</li>
+          <li><kbd className="kbd">Ctrl</kbd> + arrows snap the focused window</li>
         </ul>
       </section>
 
       <section className="quodex-card mt-3">
         <h2 className="text-[14px] font-semibold">About</h2>
         <p className="mt-1 text-[12px] leading-relaxed text-win-subtle">
-          Lightweight Windows companion to the macOS Quodex app. This live page is a demo — ChatGPT sessions live in the downloaded installer, sealed with DPAPI. Composition uses
+          Lightweight Windows companion to the macOS original — about 5 MB, system WebView2, Chromium not bundled. This live page is a demo. ChatGPT sessions live in the downloaded app, sealed with DPAPI. Composition uses
           {transparency ? " mica and acrylic" : " solid fills"}
           {reduceMotion ? " with motion reduced." : "."}
         </p>
@@ -412,7 +411,7 @@ function QuodexFolder() {
       <button type="button" className="quodex-card mt-4 flex w-full items-center justify-between text-left" onClick={downloadWindowsApp}>
         <span>
           <span className="block text-[13px] font-medium">Get {SITE.product}</span>
-          <span className="text-[11px] text-win-subtle">Portable installer · GitHub Releases</span>
+          <span className="text-[11px] text-win-subtle">Portable ~2 MB zip · GitHub Releases</span>
         </span>
         <Download size={16} className="text-win-accent" />
       </button>
@@ -502,7 +501,7 @@ export function TaskManagerWindow() {
       id: "quodex",
       name: "Quodex",
       cpu: quodexAlive ? (windows.quodex.open ? "2%" : "1%") : "0%",
-      mem: quodexAlive ? `${(12 + accounts.length * 0.6).toFixed(1)} MB` : "0 MB",
+      mem: quodexAlive ? `${Math.round(18 + accounts.length * 1.4)} MB` : "0 MB",
     },
     { id: "explorer", name: "Windows Explorer", cpu: windows.explorer.open ? "1%" : "0%", mem: "11 MB" },
     { id: "settings", name: "Settings", cpu: windows.settings.open ? "1%" : "0%", mem: "9 MB" },
@@ -622,7 +621,7 @@ export function DesktopIcons() {
 
   const icons = [
     { id: "recycle", label: "Recycle Bin", node: <RecycleIcon size={size} /> },
-    { id: "quodex", label: "Quodex", node: <span className="drop-shadow-md"><svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#1677FF" /><path d="M7.2 11.4a9.2 9.2 0 1 1 0 9.2" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /><path d="M12.2 16a3.8 3.8 0 1 1 1.15 2.7" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /></svg></span> },
+    { id: "quodex", label: "Quodex", node: <span className="drop-shadow-md"><QuodexAppIcon size={size} /></span> },
     { id: "install", label: "Install Quodex", node: <InstallIcon size={size} /> },
     { id: "github", label: "GitHub", node: <span className="grid place-items-center rounded-lg" style={{ width: size, height: size }}><svg width={size} height={size} viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0D1117" /><path fill="#F0F6FC" d="M16 7.4c-4.7 0-8.5 3.8-8.5 8.5 0 3.76 2.44 6.95 5.82 8.08.42.08.58-.18.58-.41 0-.2-.01-.74-.01-1.45-2.37.52-2.87-1.14-2.87-1.14-.38-.98-.94-1.25-.94-1.25-.78-.53.06-.52.06-.52.86.06 1.31.88 1.31.88.76 1.3 2 .93 2.48.71.08-.55.3-.93.54-1.14-1.89-.21-3.87-.94-3.87-4.2 0-.93.33-1.69.88-2.29-.09-.21-.38-1.08.08-2.25 0 0 .71-.23 2.34.87a8.1 8.1 0 0 1 4.26 0c1.62-1.1 2.33-.87 2.33-.87.47 1.17.18 2.04.09 2.25.55.6.88 1.36.88 2.29 0 3.27-1.99 3.99-3.89 4.2.31.26.58.78.58 1.58 0 1.14-.01 2.06-.01 2.34 0 .23.15.5.58.41A8.52 8.52 0 0 0 24.5 15.9c0-4.7-3.8-8.5-8.5-8.5Z" /></svg></span> },
     { id: "settings", label: "Settings", node: <SettingsGlyph size={size} /> },
@@ -677,7 +676,7 @@ export function DesktopIcons() {
                 setMenu(null);
               }}
             >
-              Download installer
+              Download for Windows
             </button>
           ) : null}
           <button type="button" className="block w-full px-3 py-1.5 text-left hover:bg-white/8" onClick={() => setMenu(null)}>
