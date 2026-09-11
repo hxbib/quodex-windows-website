@@ -84,7 +84,7 @@ Network
 DNS
 
 - Apex `quodex.app` stays orange-clouded on the macOS Worker Custom Domain
-- Optional `www` → apex: Redirect Rule `www.quodex.app/*` 301 to `https://quodex.app/${1}`
+- `www.quodex.app` is a proxied CNAME to apex. Redirect Rule: `www.quodex.app/*` 301 to `https://quodex.app${path}` (query preserved)
 
 ## What you do not host here
 
