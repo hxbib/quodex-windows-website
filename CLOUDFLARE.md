@@ -6,34 +6,18 @@ Live: **https://quodex.app/windows**
 
 ## How a push deploys
 
-GitHub is the origin. A push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
+Cloudflare Workers Static Assets are the only origin. A push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
 
 1. `npm ci`, tests, and `npm run build`
-2. Built files are force-published to branch [`cf-live`](https://github.com/hxbib/quodex-windows-website/tree/cf-live)
-3. The Worker on route `quodex.app/windows*` serves `cf-live` from GitHub. Hashed `/assets/*` files cache in KV. HTML and text files revalidate from GitHub so the next push goes live without a Cloudflare token.
+2. `npx wrangler deploy` uploads the Worker and `dist/` together
 
-Well-known files live in `public/` and ship with `cf-live`:
+There is no GitHub `cf-live` fallback and no KV HTML cache. If Wrangler cannot deploy, the workflow fails.
 
-- `/windows/robots.txt`, `/windows/sitemap.xml`
-- `/windows/llms.txt`, `/windows/llm.txt`, `/windows/humans.txt`
-- `/windows/.well-known/security.txt` and `/windows/security.txt`
-- Apex aliases on the same Worker: `/.well-known/security.txt`, `/security.txt`, `/llms.txt`, `/llm.txt`, `/humans.txt`
+Required repository secret:
 
-Do not attach a Worker to `/robots.txt` — Cloudflare manages the zone robots file for AI crawlers.
+- `CLOUDFLARE_API_TOKEN` — Workers Scripts Edit, Account Settings Read, Workers Assets, Zone Workers Routes Edit on `quodex.app`
 
-
-No Cloudflare API token is required for that path.
-
-## Optional: native Wrangler deploy
-
-Add repository secrets:
-
-- `CLOUDFLARE_API_TOKEN` — Workers Scripts Edit, Account Settings Read, Zone Workers Routes Edit on `quodex.app`
-- `CLOUDFLARE_ACCOUNT_ID` — `3c3fe681053affe566cb197e28892790`
-
-The same workflow then also runs `npx wrangler deploy`, which uploads Worker static assets from `wrangler.toml`.
-
-Or connect Git in the dashboard: Workers → `quodex-windows-website` → Settings → Builds → Connect, after authorizing the Cloudflare GitHub App. The API cannot install that app.
+Account id is already in `wrangler.toml`: `3c3fe681053affe566cb197e28892790`.
 
 Do **not** attach a Custom Domain for the whole zone — that would steal `quodex.app/`.
 
@@ -43,6 +27,15 @@ Route already live:
 - Route: `quodex.app/windows*`
 
 More-specific Worker routes beat the macOS Worker Custom Domain, so `/` stays macOS and `/windows` is this site.
+
+Well-known files live in `public/` and ship with the Worker assets:
+
+- `/windows/robots.txt`, `/windows/sitemap.xml`
+- `/windows/llms.txt`, `/windows/llm.txt`, `/windows/humans.txt`
+- `/windows/.well-known/security.txt` and `/windows/security.txt`
+- Apex aliases on the same Worker: `/.well-known/security.txt`, `/security.txt`, `/llms.txt`, `/llm.txt`, `/humans.txt`
+
+Do not attach a Worker to `/robots.txt` — Cloudflare manages the zone robots file for AI crawlers.
 
 ## Zone settings (quodex.app)
 

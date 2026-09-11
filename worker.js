@@ -1,5 +1,3 @@
-const ORIGIN = "https://raw.githubusercontent.com/hxbib/quodex-windows-website/cf-live";
-
 const SECURITY = {
   "content-security-policy":
     "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self' data:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests",
@@ -67,52 +65,15 @@ function resolve(pathname) {
   if (APEX[pathname]) return APEX[pathname];
   if (pathname === "/windows") return { redirect: "/windows/" };
   if (!pathname.startsWith("/windows/")) return null;
-  let path = pathname.slice("/windows".length) || "/";
+  const path = pathname.slice("/windows".length) || "/";
   if (path === "/" || path.endsWith("/")) return "/index.html";
   return path;
-}
-
-function isFilePath(path) {
-  return /\/[^/]+\.[A-Za-z0-9]+$/.test(path);
-}
-
-function looksLikeHtml(response, path) {
-  if (path.endsWith(".html")) return false;
-  const type = response.headers.get("content-type") || "";
-  return type.includes("text/html");
 }
 
 function notFound() {
   return applyHeaders(new Response("Not found", { status: 404 }), {
     "content-type": "text/plain; charset=utf-8",
     "cache-control": "no-store",
-  });
-}
-
-async function fromAssets(env, path, request) {
-  if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") return null;
-  const response = await env.ASSETS.fetch(new Request(new URL(path, "https://assets.local"), request));
-  if (!response.ok) return null;
-  if (looksLikeHtml(response, path)) return null;
-  return response;
-}
-
-async function fromCache(env, path) {
-  const store =
-    env.CACHE && typeof env.CACHE.get === "function"
-      ? env.CACHE
-      : env.ASSETS && typeof env.ASSETS.get === "function"
-        ? env.ASSETS
-        : null;
-  if (!store) return null;
-  const hit = await store.get(path, { type: "arrayBuffer" });
-  if (!hit) return null;
-  return new Response(hit, { headers: { "content-type": mime(path) } });
-}
-
-async function fromGithub(path) {
-  return fetch(ORIGIN + path, {
-    cf: { cacheTtl: path.endsWith(".html") ? 30 : 300, cacheEverything: true },
   });
 }
 
@@ -135,46 +96,22 @@ export default {
       });
     }
     if (!resolved) return notFound();
-
-    const asset = await fromAssets(env, resolved, request);
-    if (asset) {
-      return applyHeaders(asset, { "cache-control": cacheControl(resolved) });
+    if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") {
+      return applyHeaders(new Response("Windows landing is not deployed", { status: 503 }), {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "no-store",
+      });
     }
 
-    if (resolved.startsWith("/assets/")) {
-      const cached = await fromCache(env, resolved);
-      if (cached) {
-        return applyHeaders(cached, { "cache-control": cacheControl(resolved) });
-      }
+    const assetRequest = new Request(new URL(resolved, "https://assets.local"), request);
+    let asset = await env.ASSETS.fetch(assetRequest);
+    if (asset.status === 404 && !/\.[A-Za-z0-9]+$/.test(resolved)) {
+      asset = await env.ASSETS.fetch(new Request(new URL("/index.html", "https://assets.local"), request));
     }
+    if (!asset.ok) return notFound();
 
-    const github = await fromGithub(resolved);
-    if (!github.ok) {
-      if (!isFilePath(resolved) && resolved !== "/index.html") {
-        const index = await fromGithub("/index.html");
-        if (index.ok) {
-          const html = await index.arrayBuffer();
-          return applyHeaders(new Response(html, { status: 200 }), {
-            "content-type": "text/html; charset=utf-8",
-            "cache-control": cacheControl("/index.html"),
-          });
-        }
-      }
-      return notFound();
-    }
-
-    const body = await github.arrayBuffer();
-    if (resolved.startsWith("/assets/")) {
-      const store =
-        env.CACHE && typeof env.CACHE.put === "function"
-          ? env.CACHE
-          : env.ASSETS && typeof env.ASSETS.put === "function"
-            ? env.ASSETS
-            : null;
-      if (store) void store.put(resolved, body);
-    }
-    return applyHeaders(new Response(body, { status: 200 }), {
-      "content-type": mime(resolved),
+    return applyHeaders(asset, {
+      "content-type": asset.headers.get("content-type") || mime(resolved),
       "cache-control": cacheControl(resolved),
     });
   },

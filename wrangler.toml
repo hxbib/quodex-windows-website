@@ -1,6 +1,7 @@
 name = "quodex-windows-website"
 main = "worker.js"
 compatibility_date = "2026-09-11"
+account_id = "3c3fe681053affe566cb197e28892790"
 workers_dev = true
 preview_urls = true
 

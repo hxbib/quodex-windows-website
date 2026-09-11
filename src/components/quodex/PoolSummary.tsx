@@ -117,7 +117,6 @@ export function PoolSummary({ accounts, refreshStates, now }: PoolSummaryProps) 
         <ul className="mt-2.5 flex flex-col gap-2">
           {lanes.map((lane) => {
             const accts = `${lane.accountCount} acct${lane.accountCount === 1 ? "" : "s"}`;
-            const remaining = lane.accountCount > 0 ? lane.remaining / lane.accountCount : 0;
             const reset = lane.nextReset
               ? `next ${resetCountdown(lane.nextReset, now)} · ${clockWithWeekday(lane.nextReset, now)}`
               : "";
@@ -128,15 +127,15 @@ export function PoolSummary({ accounts, refreshStates, now }: PoolSummaryProps) 
                     {displayLaneName(lane.group, lane.name)}
                     <span className="font-normal text-win-subtle"> · {accts}</span>
                   </span>
-                  <span className="pool-lane-pct">{Math.round(remaining)}%</span>
+                  <span className="pool-lane-pct">{Math.round(lane.remaining)}%</span>
                   {reset ? <span className="pool-lane-reset">{reset}</span> : null}
                 </div>
                 <div className="usage-track">
                   <div
                     className="usage-fill"
                     style={{
-                      width: `${Math.min(100, remaining)}%`,
-                      background: remaining <= 0 ? "var(--color-win-critical)" : "var(--color-win-accent)",
+                      width: `${Math.min(100, lane.remaining)}%`,
+                      background: lane.remaining <= 0 ? "var(--color-win-critical)" : "var(--color-win-accent)",
                     }}
                   />
                 </div>
