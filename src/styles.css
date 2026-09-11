@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss" source(".");
 
 @theme {
   --font-sans: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", "Helvetica Neue", system-ui, sans-serif;
