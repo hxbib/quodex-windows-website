@@ -9,6 +9,7 @@ export const SITE = {
   asset: "/Quodex-windows-x64.zip",
   source: "https://github.com/hxbib/quodex-windows",
   macos: "https://quodex.app",
+  windows: "https://quodex.app/windows/",
   macosSource: "https://github.com/hxbib/Quodex",
   author: "Sadman Habib",
   authorUrl: "https://github.com/hxbib",

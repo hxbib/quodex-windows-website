@@ -4,6 +4,7 @@ import { QuodexAppIcon, WindowsLogo } from "@/components/icons";
 import { useDesktopStore } from "@/lib/desktop/store";
 import { formatTaskbarTime } from "@/lib/quodex/format";
 import { downloadWindowsApp, SITE } from "@/lib/site";
+import { PlatformSwitch } from "./PlatformSwitch";
 
 const UNLOCK_MS = 400;
 
@@ -123,7 +124,7 @@ export function LockScreen() {
   const unlock = (event?: { target?: EventTarget | null }) => {
     if (leaving) return;
     const target = event?.target as HTMLElement | null;
-    if (target?.closest("a, button")) return;
+    if (target?.closest("a, button, .platform-switch")) return;
     enterDesktop();
   };
 
@@ -141,7 +142,7 @@ export function LockScreen() {
         if (event.nativeEvent.isComposing || event.metaKey || event.ctrlKey || event.altKey) return;
         if (event.key === "Tab" || event.key.startsWith("F")) return;
         const target = event.target as HTMLElement | null;
-        if (target?.closest("a, button")) return;
+        if (target?.closest("a, button, .platform-switch")) return;
         if (event.key.length === 1 || event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           unlock();
@@ -185,6 +186,8 @@ export function LockScreen() {
                 Every lane ChatGPT reports
               </p>
 
+              <PlatformSwitch current="windows" />
+
               <div className="lock-actions">
                 <button
                   type="button"
@@ -211,10 +214,6 @@ export function LockScreen() {
                 <span className="lock-meta-req">{SITE.requirements}. </span>
                 <span className="lock-meta-indie">Independent — not affiliated with OpenAI. </span>
                 <span className="lock-meta-links">
-                  <a href={SITE.macos} target="_blank" rel="noreferrer">
-                    macOS original
-                  </a>
-                  <span aria-hidden="true"> · </span>
                   <a href={SITE.source} target="_blank" rel="noreferrer">
                     Source
                   </a>
@@ -235,6 +234,7 @@ export function MobileDownloadBar() {
   if (power !== "on") return null;
   return (
     <div className="mobile-site-bar acrylic">
+      <PlatformSwitch current="windows" />
       <button type="button" className="fluent-btn fluent-btn-accent" onClick={downloadWindowsApp}>
         <Download size={15} />
         Download for Windows

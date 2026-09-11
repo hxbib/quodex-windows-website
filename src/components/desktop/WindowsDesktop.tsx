@@ -19,6 +19,7 @@ import {
 } from "./Overlays";
 import { Taskbar } from "./Taskbar";
 import { LockScreen, MobileDownloadBar } from "./LockScreen";
+import { PlatformSwitch } from "./PlatformSwitch";
 import { QuodexFlyout } from "@/components/quodex/QuodexFlyout";
 import { QuodexWindow } from "@/components/quodex/QuodexWindow";
 import { RemoveDialog } from "@/components/quodex/RemoveDialog";
@@ -76,7 +77,7 @@ export function WindowsDesktop() {
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
       if (!target) return;
-      if (target.closest(".flyout, .taskbar, .jump-list, .desktop-context, .win-window, .snap-picker, .win-toast, .toast-card")) {
+      if (target.closest(".flyout, .taskbar, .jump-list, .desktop-context, .win-window, .snap-picker, .win-toast, .toast-card, .platform-switch, .mobile-site-bar")) {
         return;
       }
       const desktop = useDesktopStore.getState();
@@ -287,6 +288,7 @@ export function WindowsDesktop() {
           {removeTarget ? <RemoveDialog /> : null}
           <DesktopToasts />
           <MobileDownloadBar />
+          <PlatformSwitch current="windows" className="platform-switch-dock acrylic" />
           <TaskView />
           <AppSwitcher />
           <Taskbar />
