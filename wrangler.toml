@@ -36,6 +36,10 @@ zone_name = "quodex.app"
 pattern = "quodex.app/humans.txt"
 zone_name = "quodex.app"
 
+[[routes]]
+pattern = "quodex.app/sitemap.xml"
+zone_name = "quodex.app"
+
 [observability]
 enabled = true
 

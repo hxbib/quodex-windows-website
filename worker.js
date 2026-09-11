@@ -17,6 +17,7 @@ const APEX = {
   "/llms.txt": "/llms.txt",
   "/llm.txt": "/llm.txt",
   "/humans.txt": "/humans.txt",
+  "/sitemap.xml": "/sitemap.xml",
 };
 
 function applyHeaders(response, extra) {

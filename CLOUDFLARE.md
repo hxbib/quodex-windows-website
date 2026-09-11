@@ -6,12 +6,13 @@ Live: **https://quodex.app/windows**
 
 ## How a push deploys
 
-Cloudflare Workers Static Assets are the only origin. A push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
+Cloudflare Workers Static Assets are the live origin. A push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
 
 1. `npm ci`, tests, and `npm run build`
-2. `npx wrangler deploy` uploads the Worker and `dist/` together
+2. Publish `dist/` to the `cf-live` branch as a GitHub snapshot (not served)
+3. `npx wrangler deploy` uploads the Worker and `dist/` together
 
-There is no GitHub `cf-live` fallback and no KV HTML cache. If Wrangler cannot deploy, the workflow fails.
+If Wrangler cannot deploy, the workflow fails. There is no GitHub or KV fallback in the Worker.
 
 Required repository secret:
 
@@ -33,7 +34,7 @@ Well-known files live in `public/` and ship with the Worker assets:
 - `/windows/robots.txt`, `/windows/sitemap.xml`
 - `/windows/llms.txt`, `/windows/llm.txt`, `/windows/humans.txt`
 - `/windows/.well-known/security.txt` and `/windows/security.txt`
-- Apex aliases on the same Worker: `/.well-known/security.txt`, `/security.txt`, `/llms.txt`, `/llm.txt`, `/humans.txt`
+- Apex aliases on the same Worker: `/.well-known/security.txt`, `/security.txt`, `/llms.txt`, `/llm.txt`, `/humans.txt`, `/sitemap.xml`
 
 Do not attach a Worker to `/robots.txt` — Cloudflare manages the zone robots file for AI crawlers.
 
