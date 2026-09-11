@@ -2,33 +2,41 @@
 
 This Worker is the Windows landing. The macOS landing stays in [hxbib/quodex-website](https://github.com/hxbib/quodex-website) on `/`.
 
-Push to `main` deploys once this repo is connected in Cloudflare.
+Live: **https://quodex.app/windows**
 
-## Connect Git (once)
+## How a push deploys
 
-1. [Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) → **Create** → **Workers** → **Import a repository** (or open the existing `quodex-windows-website` Worker → **Settings** → **Builds** → **Connect**).
-2. Authorize GitHub. Select **hxbib/quodex-windows-website**, branch `main`.
-3. Build command: `npm ci && npm test && npm run build`
-4. Deploy command: `npx wrangler deploy`
-5. Node.js: **22**
-6. Save. The first build publishes the Worker.
+GitHub is the origin. A push to `main` runs [.github/workflows/deploy.yml](.github/workflows/deploy.yml):
 
-## Domain route (once)
+1. `npm ci`, tests, and `npm run build`
+2. Built files are force-published to branch [`cf-live`](https://github.com/hxbib/quodex-windows-website/tree/cf-live)
+3. The Worker on route `quodex.app/windows*` serves `cf-live`. Hashed `/assets/*` files cache in KV. HTML revalidates from GitHub so the next push goes live without a Cloudflare token.
+
+No Cloudflare API token is required for that path.
+
+## Optional: native Wrangler deploy
+
+Add repository secrets:
+
+- `CLOUDFLARE_API_TOKEN` — Workers Scripts Edit, Account Settings Read, Zone Workers Routes Edit on `quodex.app`
+- `CLOUDFLARE_ACCOUNT_ID` — `3c3fe681053affe566cb197e28892790`
+
+The same workflow then also runs `npx wrangler deploy`, which uploads Worker static assets from `wrangler.toml`.
+
+Or connect Git in the dashboard: Workers → `quodex-windows-website` → Settings → Builds → Connect, after authorizing the Cloudflare GitHub App. The API cannot install that app.
 
 Do **not** attach a Custom Domain for the whole zone — that would steal `quodex.app/`.
 
-Worker → **Settings** → **Domains & Routes** → **Add** → **Route**:
+Route already live:
 
 - Zone: `quodex.app`
 - Route: `quodex.app/windows*`
 
-`wrangler.toml` already declares that route. A successful deploy attaches it. If deploy errors on zone permissions, add the route in the dashboard instead and drop the `[[routes]]` block.
-
-More-specific Worker routes beat the macOS Worker Custom Domain, so `/` stays macOS and `/windows` becomes this site.
+More-specific Worker routes beat the macOS Worker Custom Domain, so `/` stays macOS and `/windows` is this site.
 
 ## Zone settings (quodex.app)
 
-Apply on the domain, not per Worker. Safe for both landings.
+Already applied on the domain. Safe for both landings.
 
 SSL/TLS
 
@@ -36,7 +44,7 @@ SSL/TLS
 - Always Use HTTPS **On**
 - Minimum TLS **1.2**, TLS 1.3 **On**
 - Automatic HTTPS Rewrites **On**
-- HSTS **On**, max-age 12 months, Include subdomains **On**, Preload **On** only after HTTPS is proven everywhere
+- HSTS **On**, max-age 12 months, Include subdomains **On**, Preload off until every hostname is HTTPS
 
 Speed
 
@@ -57,10 +65,10 @@ Caching
 Security
 
 - Security Level **Medium**
-- Bot Fight Mode **On** if it does not challenge normal browsers; otherwise Off
+- Bot Fight Mode **On** (JS detection **Off** so it does not inject scripts that the landing CSP blocks)
+- AI bots / AI training / AI search blocked
 - WAF: Cloudflare Managed Ruleset **enabled**
 - Email Obfuscation **Off**
-- Hotlink Protection optional
 
 Network
 

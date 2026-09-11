@@ -7,6 +7,8 @@ Static Vite site. It does not sign in to ChatGPT. Download the Windows app to si
 
 The macOS landing in [hxbib/quodex-website](https://github.com/hxbib/quodex-website) stays at `https://quodex.app/`.
 
+Push to `main` publishes the site. See [CLOUDFLARE.md](CLOUDFLARE.md).
+
 ## Develop
 
 ```bash
@@ -20,11 +22,12 @@ npm run dev
 
 ```bash
 npm ci
+npm test
 npm run build
 npx wrangler deploy
 ```
 
-Connect this GitHub repo to Cloudflare so a push to `main` deploys. See [CLOUDFLARE.md](CLOUDFLARE.md).
+`wrangler deploy` is optional. The GitHub Action already publishes `dist/` to `cf-live`, which is what `https://quodex.app/windows` serves.
 
 ## License
 
