@@ -65,7 +65,7 @@ Caching
 Security
 
 - Security Level **Medium**
-- Bot Fight Mode **On** (JS detection **Off** so it does not inject scripts that the landing CSP blocks)
+- Bot Fight Mode **On**
 - AI bots / AI training / AI search blocked
 - WAF: Cloudflare Managed Ruleset **enabled**
 - Email Obfuscation **Off**
