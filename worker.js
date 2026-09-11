@@ -51,7 +51,9 @@ function mime(path) {
   return "application/octet-stream";
 }
 
-function cacheControl(path) {
+function cacheControl(path, contentType) {
+  const type = contentType || "";
+  if (type.includes("text/html")) return "public, max-age=0, must-revalidate";
   if (path.startsWith("/assets/")) return "public, max-age=31536000, immutable";
   if (/\.(png|jpe?g|webp|avif|svg|ico|woff2?)$/i.test(path)) {
     return "public, max-age=86400, stale-while-revalidate=604800";
@@ -106,14 +108,19 @@ export default {
 
     const assetRequest = new Request(new URL(resolved, "https://assets.local"), request);
     let asset = await env.ASSETS.fetch(assetRequest);
-    if (asset.status === 404 && !/\.[A-Za-z0-9]+$/.test(resolved)) {
+    const isFile = /\.[A-Za-z0-9]+$/.test(resolved);
+    if (asset.status === 404 && !isFile) {
       asset = await env.ASSETS.fetch(new Request(new URL("/index.html", "https://assets.local"), request));
     }
     if (!asset.ok) return notFound();
+    const type = asset.headers.get("content-type") || mime(resolved);
+    if (isFile && resolved !== "/index.html" && type.includes("text/html")) {
+      return notFound();
+    }
 
     return applyHeaders(asset, {
-      "content-type": asset.headers.get("content-type") || mime(resolved),
-      "cache-control": cacheControl(resolved),
+      "content-type": type,
+      "cache-control": cacheControl(resolved, type),
     });
   },
 };
