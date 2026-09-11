@@ -637,6 +637,35 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .dashboard-root {
+    container-type: inline-size;
+  }
+  .dashboard-board {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    align-content: start;
+    gap: 6px;
+  }
+  .dashboard-board > .pool-card {
+    grid-column: 1;
+    grid-row: 1 / -1;
+  }
+  .dashboard-board > :not(.pool-card) {
+    grid-column: 2;
+    min-width: 0;
+  }
+  @container (max-width: 460px) {
+    .dashboard-board {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .dashboard-board > .pool-card,
+    .dashboard-board > :not(.pool-card) {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+
   .toast-card {
     display: flex;
     align-items: flex-start;

@@ -40,7 +40,7 @@ export function Dashboard({ variant }: { variant: "window" | "flyout" }) {
   if (loginPresented) return <LoginView />;
 
   return (
-    <div className="relative flex h-full flex-col">
+    <div className="dashboard-root relative flex h-full flex-col">
       {toast ? (
         <div className="pointer-events-none absolute inset-x-3 top-2 z-10">
           <div className="toast-card mica">
@@ -123,10 +123,14 @@ export function Dashboard({ variant }: { variant: "window" | "flyout" }) {
       {accounts.length === 0 ? (
         <EmptyState onAdd={() => presentLogin()} />
       ) : (
-        <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto px-3 pb-3">
+        <div
+          className={cn(
+            "min-h-0 flex-1 overflow-y-auto px-3 pb-3",
+            variant === "window" ? "dashboard-board" : "flex flex-col gap-1.5",
+          )}
+        >
           <PoolSummary accounts={accounts} refreshStates={refreshStates} now={now} />
-          <div className="grid grid-cols-1 gap-1.5">
-            {accounts.map((account, index) => (
+          {accounts.map((account, index) => (
               <div
                 key={account.id}
                 onDragOver={(event) => {
@@ -157,7 +161,6 @@ export function Dashboard({ variant }: { variant: "window" | "flyout" }) {
                 </div>
               </div>
             ))}
-          </div>
         </div>
       )}
     </div>
