@@ -1,7 +1,7 @@
 /* TEAM */
 Developer: Sadman Habib
 Site: https://github.com/hxbib
-Contact: security@quodex.app
+Contact: contact@curzohlabs.com
 
 /* SITE */
 Standards: HTML, CSS, JavaScript

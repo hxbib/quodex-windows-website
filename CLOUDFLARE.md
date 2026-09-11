@@ -27,16 +27,16 @@ Route already live:
 - Zone: `quodex.app`
 - Route: `quodex.app/windows*`
 
-More-specific Worker routes beat the macOS Worker Custom Domain, so `/` stays macOS and `/windows` is this site.
+More-specific Worker routes beat the macOS Worker Custom Domain, so `/` stays macOS and `/windows` is this site. There is no `*quodex.app` catch-all.
 
 Well-known files live in `public/` and ship with the Worker assets:
 
 - `/windows/robots.txt`, `/windows/sitemap.xml`
 - `/windows/llms.txt`, `/windows/llm.txt`, `/windows/humans.txt`
 - `/windows/.well-known/security.txt` and `/windows/security.txt`
-- Apex aliases on the same Worker: `/.well-known/security.txt`, `/security.txt`, `/llms.txt`, `/llm.txt`, `/humans.txt`, `/sitemap.xml`
+- Apex aliases on the same Worker: `/.well-known/security.txt`, `/security.txt`, `/llms.txt`, `/llm.txt`, `/humans.txt`, `/robots.txt`, `/sitemap.xml`
 
-Do not attach a Worker to `/robots.txt` — Cloudflare manages the zone robots file for AI crawlers.
+Apex `/robots.txt` allows every crawler, including AI, and lists `https://quodex.app/sitemap.xml`.
 
 ## Zone settings (quodex.app)
 
@@ -48,7 +48,7 @@ SSL/TLS
 - Always Use HTTPS **On**
 - Minimum TLS **1.2**, TLS 1.3 **On**
 - Automatic HTTPS Rewrites **On**
-- HSTS **On**, max-age 12 months, Include subdomains **On**, Preload off until every hostname is HTTPS
+- HSTS **On**, max-age 12 months, Include subdomains **On**, Preload **On**
 
 Speed
 
@@ -69,22 +69,24 @@ Caching
 Security
 
 - Security Level **Medium**
-- Bot Fight Mode **On**
-- AI bots / AI training / AI search blocked
+- Bot Fight Mode **On** (JS detections via same-origin `/cdn-cgi/`)
+- AI search / user / training **allowed**
 - WAF: Cloudflare Managed Ruleset **enabled**
 - Email Obfuscation **Off**
+- DNSSEC **On**
+- CAA: `pki.goog` and `letsencrypt.org` (issue + issuewild)
 
 Network
 
-- HTTP/2 **On**
+- HTTP/2 **On**, HTTP/2 prioritization **On**
 - WebSockets **On**
 - gRPC **Off**
 - Pseudo IPv4 **Off**
 
 DNS
 
-- Apex `quodex.app` stays orange-clouded on the macOS Worker Custom Domain
-- `www.quodex.app` is a proxied CNAME to apex. Redirect Rule: `www.quodex.app/*` 301 to `https://quodex.app${path}` (query preserved)
+- Apex `quodex.app` stays orange-clouded on the macOS Worker Custom Domain (hostname only, no catch-all)
+- `www.quodex.app` is a proxied CNAME. Redirect Rule: `www.quodex.app/*` 301 to `https://quodex.app${path}` (query preserved)
 
 ## What you do not host here
 

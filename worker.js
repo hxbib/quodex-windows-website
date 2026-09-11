@@ -1,13 +1,13 @@
 const SECURITY = {
   "content-security-policy":
-    "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self' data:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests",
+    "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com; font-src 'self' data:; worker-src 'self' blob:; frame-src 'self' https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests",
   "referrer-policy": "strict-origin-when-cross-origin",
   "x-content-type-options": "nosniff",
   "x-frame-options": "DENY",
   "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
   "cross-origin-opener-policy": "same-origin",
   "cross-origin-resource-policy": "same-origin",
-  "strict-transport-security": "max-age=31536000; includeSubDomains",
+  "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
   "x-permitted-cross-domain-policies": "none",
 };
 
@@ -17,6 +17,7 @@ const APEX = {
   "/llms.txt": "/llms.txt",
   "/llm.txt": "/llm.txt",
   "/humans.txt": "/humans.txt",
+  "/robots.txt": "/robots.txt",
   "/sitemap.xml": "/sitemap.xml",
 };
 

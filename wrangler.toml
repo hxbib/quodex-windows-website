@@ -2,8 +2,8 @@ name = "quodex-windows-website"
 main = "worker.js"
 compatibility_date = "2026-09-11"
 account_id = "3c3fe681053affe566cb197e28892790"
-workers_dev = true
-preview_urls = true
+workers_dev = false
+preview_urls = false
 
 [assets]
 directory = "./dist"
@@ -40,8 +40,17 @@ zone_name = "quodex.app"
 pattern = "quodex.app/sitemap.xml"
 zone_name = "quodex.app"
 
+[[routes]]
+pattern = "quodex.app/robots.txt"
+zone_name = "quodex.app"
+
 [observability]
 enabled = true
+head_sampling_rate = 0.1
+
+[observability.logs]
+enabled = true
+head_sampling_rate = 0.1
 
 [build]
 command = "npm ci && npm test && npm run build"
