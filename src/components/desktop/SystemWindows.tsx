@@ -355,7 +355,6 @@ function ThisPc() {
       <h2 className="text-[20px] font-semibold">This PC</h2>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <Drive name="Windows (C:)" used={18} total={64} hint="Lightweight profile" />
-        <Drive name="Data (D:)" used={4} total={128} hint="Local Quodex cache" />
       </div>
     </>
   );
