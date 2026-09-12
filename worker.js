@@ -107,7 +107,7 @@ export default {
     if (asset.status === 404 && !isFile) {
       asset = await env.ASSETS.fetch(new Request(new URL("/index.html", "https://assets.local"), request));
     }
-    if (!asset.ok) return notFound();
+    if (!asset.ok && asset.status !== 304) return notFound();
     const type = asset.headers.get("content-type") || mime(resolved);
     if (isFile && resolved !== "/index.html" && type.includes("text/html")) {
       return notFound();
