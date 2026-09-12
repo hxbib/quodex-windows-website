@@ -1,0 +1,7 @@
+# Quodex
+
+See https://quodex.app/llms.txt for the full machine-readable overview.
+
+Quodex is a ChatGPT usage tracker for Windows and macOS. Landing: https://quodex.app/windows
+Source: https://github.com/hxbib/quodex-windows
+Independent — not affiliated with OpenAI.

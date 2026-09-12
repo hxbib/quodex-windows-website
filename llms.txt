@@ -1,0 +1,19 @@
+# Quodex
+
+> Know your limits. Own your resets.
+
+Quodex is a lightweight tray companion that tracks ChatGPT usage limits, pooled capacity, and banked resets across accounts.
+
+## Product
+
+- [Quodex for Windows](https://quodex.app/windows): interactive Windows 11 landing and download
+- [Quodex for macOS](https://quodex.app): original menu-bar app
+- [Windows source](https://github.com/hxbib/quodex-windows)
+- [macOS source](https://github.com/hxbib/Quodex)
+- [Windows landing source](https://github.com/hxbib/quodex-windows-website)
+
+## Notes
+
+- Independent project, not affiliated with OpenAI.
+- The Windows app stores sessions with DPAPI on the local PC. This website never stores ChatGPT credentials.
+- License: MIT

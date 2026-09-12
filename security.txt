@@ -1,0 +1,8 @@
+Contact: mailto:contact@curzohlabs.com
+Contact: https://github.com/hxbib/Quodex/security/advisories/new
+Contact: https://github.com/hxbib/quodex-windows/security/advisories/new
+Expires: 2027-09-10T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://quodex.app/.well-known/security.txt
+Policy: https://github.com/hxbib/Quodex/blob/main/SECURITY.md
+Policy: https://github.com/hxbib/quodex-windows/blob/main/SECURITY.md
