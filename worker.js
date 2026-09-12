@@ -67,7 +67,7 @@ function cacheControl(path, contentType) {
 
 function resolve(pathname) {
   if (APEX[pathname]) return APEX[pathname];
-  if (pathname === "/windows") return { redirect: "/windows/" };
+  if (pathname === "/windows" || pathname === "/windows/") return "/index.html";
   if (!pathname.startsWith("/windows/")) return null;
   const path = pathname.slice("/windows".length) || "/";
   if (path === "/" || path.endsWith("/")) return "/index.html";
@@ -93,12 +93,6 @@ export default {
     }
 
     const resolved = resolve(url.pathname);
-    if (resolved && resolved.redirect) {
-      return new Response(null, {
-        status: 308,
-        headers: { location: resolved.redirect + url.search, ...SECURITY },
-      });
-    }
     if (!resolved) return notFound();
     if (!env.ASSETS || typeof env.ASSETS.fetch !== "function") {
       return applyHeaders(new Response("Windows landing is not deployed", { status: 503 }), {
